@@ -43,22 +43,28 @@ import os
 # ----------------------------------------------------------------------------
 # Constantes do protocolo
 # ----------------------------------------------------------------------------
-CODIFICACAO = "utf-8"
-PORTA_PADRAO = 5000
+# Ficam num único lugar para cliente e servidor usarem EXATAMENTE as mesmas
+# palavras. Se um lado escrevesse "LEITURA" e o outro esperasse "Leitura",
+# a conversa falharia. Mudou o protocolo? Muda só aqui.
+CODIFICACAO = "utf-8"       # como converter texto <-> bytes (a rede só leva bytes)
+PORTA_PADRAO = 5000         # porta TCP sugerida; acima de 1023 não exige root
 
-CMD_ID = "ID"
+CMD_ID = "ID"               # comandos que o CLIENTE envia
 CMD_LEITURA = "LEITURA"
 CMD_SAIR = "SAIR"
 
-RESP_OK = "OK"
+RESP_OK = "OK"              # respostas curtas do SERVIDOR
 RESP_TCHAU = "TCHAU"
 
 
 def enviar(sock, texto):
     """Envia uma mensagem (uma linha) pelo socket.
 
-    sendall() garante que TODOS os bytes saiam; o send() comum pode mandar
-    só uma parte e devolver quantos bytes conseguiu.
+    Passo a passo:
+      1. acrescenta o '\n' que marca o FIM da mensagem;
+      2. converte o texto em bytes (encode), porque a rede só transporta bytes;
+      3. sendall() garante que TODOS os bytes saiam. O send() comum pode
+         mandar só uma parte e devolver quantos bytes conseguiu enviar.
     """
     sock.sendall((texto + "\n").encode(CODIFICACAO))
 
@@ -66,36 +72,49 @@ def enviar(sock, texto):
 def leitor(sock):
     """Cria um "arquivo" de leitura em cima do socket.
 
-    Com ele, readline() junta os pedaços que chegam pela rede até achar o
-    '\n', ou seja, devolve sempre UMA mensagem inteira.
+    makefile() devolve um objeto que se comporta como um arquivo aberto.
+    Com ele, readline() vai acumulando os pedaços que chegam pela rede
+    (chamando recv() por baixo dos panos) até encontrar o '\n'; só então
+    devolve a linha. Ou seja: devolve sempre UMA mensagem inteira, nem mais,
+    nem menos, mesmo que o TCP tenha picado ou juntado os bytes no caminho.
     """
     return sock.makefile("r", encoding=CODIFICACAO)
 
 
 def receber(arquivo):
-    """Lê a próxima mensagem. Devolve None se o outro lado fechou a conexão."""
+    """Lê a próxima mensagem. Devolve None se o outro lado fechou a conexão.
+
+    readline() é BLOQUEANTE: a thread fica parada aqui até chegar uma linha
+    completa. Quando o outro lado fecha o socket, o TCP sinaliza fim de fluxo
+    (EOF) e readline() devolve string vazia; é assim que descobrimos que a
+    conexão acabou.
+    """
     linha = arquivo.readline()
     if not linha:           # string vazia = conexão encerrada (EOF)
         return None
-    return linha.rstrip("\r\n")
+    return linha.rstrip("\r\n")     # tira o '\n' do fim (e o '\r', se vier)
 
 
 # ----------------------------------------------------------------------------
 # Utilidades de terminal
 # ----------------------------------------------------------------------------
+# Nada daqui passa pela rede; serve só para a tela ficar legível.
 if os.name == "nt":         # no Windows, ativa as cores ANSI do terminal
     os.system("")
 
+# Códigos de escape ANSI: o terminal interpreta "\033[91m" como a ordem
+# "mude a cor para vermelho" em vez de mostrar esses caracteres.
 VERMELHO = "\033[91m"
 AMARELO = "\033[93m"
 VERDE = "\033[92m"
 CIANO = "\033[96m"
 CINZA = "\033[90m"
 NEGRITO = "\033[1m"
-RESET = "\033[0m"
+RESET = "\033[0m"           # volta à cor normal
 
 
 def cor(texto, codigo):
+    """Envolve o texto com o código de cor e o RESET no fim: 'cor + texto + normal'."""
     return f"{codigo}{texto}{RESET}"
 
 
@@ -116,15 +135,18 @@ def perguntar(texto, padrao):
 
 
 def perguntar_numero(texto, padrao, minimo=1, maximo=None, inteiro=True):
-    """Pergunta um número e repete até o usuário digitar um valor válido."""
+    """Pergunta um número e repete até o usuário digitar um valor válido.
+
+    Aceita o jeito brasileiro de escrever: "16.000" vira 16000 e "2,5" vira 2.5.
+    """
     while True:
         bruto = perguntar(texto, padrao)
         if inteiro:
             bruto = bruto.replace(".", "")      # aceita "16.000" como 16000
-        bruto = bruto.replace(",", ".")
+        bruto = bruto.replace(",", ".")         # vírgula decimal -> ponto (padrão do Python)
         try:
             valor = int(bruto) if inteiro else float(bruto)
-        except ValueError:
+        except ValueError:                      # digitou letras, por exemplo
             print(cor("  Valor inválido, digite só números.", VERMELHO))
             continue
         if valor < minimo or (maximo is not None and valor > maximo):

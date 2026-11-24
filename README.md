@@ -116,21 +116,61 @@ Há duas formas. Escolha **uma** e configure **as duas VMs iguais**.
 1. Nas duas VMs: **Configurações → Rede → Adaptador 2 → Habilitar → Conectado a: Rede Interna**,
    nome `intnet` (o Adaptador 1 continua em NAT, para ter internet).
 2. Ligue as VMs e veja o nome da placa nova com `ip link` (normalmente `enp0s8`).
-3. Defina IPs fixos (vale até reiniciar):
+3. Defina IPs fixos que **sobrevivem ao reboot** (um arquivo em `interfaces.d`):
    ```bash
    # VM 1 (servidor)
-   sudo ip addr add 192.168.50.10/24 dev enp0s8 && sudo ip link set enp0s8 up
-   # VM 2 (cliente)
-   sudo ip addr add 192.168.50.20/24 dev enp0s8 && sudo ip link set enp0s8 up
+   sudo tee /etc/network/interfaces.d/intnet >/dev/null <<'EOF'
+   auto enp0s8
+   iface enp0s8 inet static
+       address 192.168.50.10/24
+   EOF
+   sudo ifup enp0s8
+   # VM 2 (cliente): mesmo comando, trocando por  address 192.168.50.20/24
    ```
+   Se aparecer `already configured`, rode `sudo ifdown enp0s8 && sudo ifup enp0s8`.
+   Alternativa rápida, que vale só até reiniciar:
+   `sudo ip addr add 192.168.50.10/24 dev enp0s8 && sudo ip link set enp0s8 up`.
+4. Opcional, mas ajuda na apresentação: dê nomes diferentes às VMs, para o prompt mostrar
+   `usuario@servidor` e `usuario@cliente`:
+   ```bash
+   sudo hostnamectl set-hostname servidor      # na VM 2 use "cliente"
+   sudo sed -i 's/^127.0.1.1.*/127.0.1.1\tservidor/' /etc/hosts
+   ```
+   Saia e entre de novo no terminal para o prompt atualizar.
+5. Quando tudo funcionar, tire um **snapshot** de cada VM (`pronto-apresentacao`). Se algo quebrar
+   no dia, é só restaurar.
 
 ### Testar a rede antes de rodar o projeto
+Em cada VM, dentro da pasta do projeto:
 ```bash
-# na VM do cliente
-ping -c 3 192.168.50.10
+bash ambiente.sh
 ```
-Se o ping responder, as VMs se enxergam. O Debian não vem com firewall ativo; se você tiver
-ativado o `ufw`, libere a porta: `sudo ufw allow 5000/tcp`.
+```
+════════════════════════════════════════════════════════════
+  AMBIENTE DA VM: servidor
+════════════════════════════════════════════════════════════
+ Sistema:  Debian GNU/Linux 12 (bookworm)
+ Hostname: servidor
+ Python:   Python 3.11.2
+ Placas de rede (IPv4):
+    enp0s3   10.0.2.15/24
+    enp0s8   192.168.50.10/24   <- rede interna do projeto
+────────────────────────────────────────────────────────────
+ Ping para a outra VM (192.168.50.20)...
+    ✔ As VMs se enxergam   (3 enviados, 3 recebidos, time=0.412 ms)
+────────────────────────────────────────────────────────────
+ Sockets TCP na porta 5000 (comando: ss -tan):
+    LISTEN        0.0.0.0:5000           (servidor escutando)
+    ESTABELECIDA  192.168.50.10:5000     <->  192.168.50.20:56810
+════════════════════════════════════════════════════════════
+```
+O script mostra o Debian, o hostname, os IPs de cada placa, faz `ping` na outra VM e lista os
+sockets TCP da porta 5000. A linha `ESTABELECIDA` é a prova, dada pelo próprio kernel, de que são
+duas máquinas distintas conversando por TCP. Para mostrar isso na mão, o equivalente é
+`ping -c 3 192.168.50.10` e `ss -tan | grep 5000`.
+
+O Debian não vem com firewall ativo; se você tiver ativado o `ufw`, libere a porta:
+`sudo ufw allow 5000/tcp`.
 
 ---
 
@@ -270,8 +310,10 @@ telemetria-cisterna/
 ├── servidor.py      # central de controle: bind/listen/accept, thread por cliente, alertas, status, log
 ├── cliente.py       # módulo de medição: connect, modo manual, simulação (thread), saída limpa
 ├── comum.py         # protocolo (mensagens, enviar/receber linhas) e utilidades de terminal
+├── ambiente.sh      # mostra hostname, IPs, ping e sockets TCP da VM (prova do ambiente distinto)
 ├── docs/
-│   └── ROTEIRO-APRESENTACAO.md   # roteiro da demonstração e explicação do código
+│   ├── ROTEIRO-APRESENTACAO.md   # roteiro da demonstração e explicação do código
+│   └── COLA-VMS.md               # cola de uma página da fase de VMs/rede
 └── README.md
 ```
 

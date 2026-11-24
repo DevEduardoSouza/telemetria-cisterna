@@ -314,7 +314,8 @@ telemetria-cisterna/
 ├── docs/
 │   ├── ROTEIRO-APRESENTACAO.md   # roteiro da demonstração e explicação do código
 │   └── COLA-VMS.md               # cola de uma página da fase de VMs/rede
-└── README.md
+├── README.md
+└── RUN.md           # checklist da apresentação, um item por critério da matriz de avaliação
 ```
 
 Ciclo de vida dos sockets usado no projeto:

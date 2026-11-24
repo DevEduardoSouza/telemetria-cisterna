@@ -20,11 +20,20 @@ Uso:
 import argparse                 # lê opções da linha de comando (--ip, --porta, --ponto)
 import re                       # expressões regulares: validar e extrair números
 import socket                   # API de sockets TCP/IP do sistema operacional
+import sys                      # escrever na tela sem o print (redesenhar a linha digitada)
 import threading                # thread da simulação + Lock (trava) + Event (sinal)
 
 import comum as c               # protocolo e utilidades compartilhadas com o servidor
 
+# No Linux, o readline deixa o input() editável e nos conta o que já foi
+# digitado (get_line_buffer). No Windows ele não existe: segue sem redesenhar.
+try:
+    import readline
+except ImportError:
+    readline = None
+
 INTERVALO_SIMULACAO = 4     # segundos entre uma leitura e outra na simulação
+PROMPT_SIMULACAO = "comando> "   # prompt do teclado durante a simulação
 
 
 # ============================================================================
@@ -161,12 +170,12 @@ class Simulacao:
                 print(c.cor(f"\n  Conexão perdida: {erro}", c.VERMELHO))
                 self.parar.set()
                 break
-            print(f"\n[simulação] volume enviado: {c.litros(atual)}")
-            exibir_resposta(resposta)
+            imprimir_sem_atrapalhar(f"[simulação] volume enviado: {c.litros(atual)}",
+                                    resposta=resposta)
 
             if atual <= 0:                  # acabou a água: não faz sentido continuar
-                print(c.cor("  Cisterna vazia: simulação encerrada. "
-                            "Digite 'parar' para voltar ao menu.", c.VERMELHO))
+                imprimir_sem_atrapalhar(c.cor("  Cisterna vazia: simulação encerrada. "
+                                              "Digite 'parar' para voltar ao menu.", c.VERMELHO))
                 break
             # wait() é um "sleep" que pode ser interrompido pelo comando parar:
             # dorme até 4 s, mas acorda na hora se parar.set() for chamado.
@@ -175,6 +184,24 @@ class Simulacao:
                 break
             with self.trava:                # desconta o consumo (nunca abaixo de zero)
                 self.volume = max(0, self.volume - self.consumo)
+
+
+def imprimir_sem_atrapalhar(*linhas, resposta=None):
+    """Imprime mensagens da simulação sem bagunçar o que o usuário está digitando.
+
+    O input() da thread principal pode estar no meio de um "chuva 4000" quando
+    chega a leitura dos 4 s. Então: apaga a linha em edição, imprime as
+    mensagens e redesenha o prompt com o texto que já tinha sido digitado
+    (readline.get_line_buffer()). O usuário continua de onde parou.
+    """
+    sys.stdout.write("\r\033[K")        # volta ao início da linha e apaga até o fim
+    for linha in linhas:
+        print(linha)
+    if resposta is not None:
+        exibir_resposta(resposta)
+    digitado = readline.get_line_buffer() if readline else ""
+    sys.stdout.write(PROMPT_SIMULACAO + digitado)
+    sys.stdout.flush()
 
 
 def modo_simulacao(conexao, capacidade):
@@ -195,7 +222,7 @@ def modo_simulacao(conexao, capacidade):
     sair_do_programa = False
     try:
         while True:                 # laço do teclado, em paralelo com a simulação
-            texto = input().strip().lower()
+            texto = input(PROMPT_SIMULACAO).strip().lower()
             if texto in ("parar", "sair"):
                 sair_do_programa = texto == "sair"
                 break

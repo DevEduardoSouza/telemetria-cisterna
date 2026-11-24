@@ -8,7 +8,7 @@ imprime na tela (Debian, hostname, IPs, ping e sockets TCP da porta 5000).
 ## ANTES (10 min antes da aula)
 
 - [ ] Ligar as **2 VMs** (servidor e cliente). Elas sobem direto no terminal (sem área de trabalho)
-- [ ] Entrar: usuário `eduardo`, senha `cisterna`
+- [ ] Entrar: usuário `eduardo`
 - [ ] Nas duas: `cd telemetria-cisterna && git pull`
 - [ ] Na VM **cliente**: `bash ambiente.sh` → tem que aparecer **[OK] As VMs se enxergam**
 - [ ] Deu [X]? Restaurar o snapshot `pronto-apresentacao` nas duas VMs e repetir

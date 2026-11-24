@@ -1,7 +1,7 @@
 # RUN · Checklist da apresentação (24/11)
 
 Marque cada critério quando estiver pronto. Total: 10 pontos (8 + 2 extras).
-Login nas VMs: usuário `eduardo`, senha `cisterna`.
+Login nas VMs: usuário `eduardo` (senha combinada).
 
 ---
 
@@ -13,13 +13,13 @@ Login nas VMs: usuário `eduardo`, senha `cisterna`.
 1. Abrir o **VirtualBox**. Na lista aparecem `debian-servidor` e `debian-cliente`.
 2. **Iniciar as duas** (selecionar → Iniciar). Elas sobem direto no terminal, em 30 a 40 s.
    Coloque as duas janelas lado a lado.
-3. Entrar nas duas: `eduardo` / `cisterna`.
+3. Entrar nas duas com o usuário `eduardo`.
 4. Nas duas:
    ```bash
    cd telemetria-cisterna
    bash ambiente.sh
    ```
-5. Mostrar ao professor, apontando na tela:
+5. Mostrar, apontando na tela:
    - VirtualBox com as **duas VMs** (Configurações → Rede → Adaptador 2 = Rede Interna `intnet`);
    - em cada VM: `Debian GNU/Linux 12`, hostname `servidor` / `cliente`;
    - IPs diferentes na mesma rede: `192.168.50.10` e `192.168.50.20` na `enp0s8`;

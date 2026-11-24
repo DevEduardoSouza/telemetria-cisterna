@@ -14,8 +14,17 @@ else
   N=""; B=""; VERDE=""; VERM=""; AMAR=""; AZUL=""
 fi
 
-L1="════════════════════════════════════════════════════════════"
-L2="────────────────────────────────────────────────────────────"
+# No console de texto (TERM=linux) a fonte não tem os caracteres de caixa nem o ✔: usa ASCII.
+case "${TERM:-}" in
+  linux|dumb|"")
+    L1="============================================================"
+    L2="------------------------------------------------------------"
+    OK="[OK]"; FALHA="[X]" ;;
+  *)
+    L1="════════════════════════════════════════════════════════════"
+    L2="────────────────────────────────────────────────────────────"
+    OK="✔"; FALHA="✘" ;;
+esac
 titulo() { printf '%s\n%s  %s%s\n%s\n' "$L1" "$B$AZUL" "$1" "$N" "$L1"; }
 
 HOST=$(hostname)
@@ -57,9 +66,9 @@ printf ' Ping para a outra VM (%s)...\n' "$OUTRO"
 SAIDA_PING=$(ping -c 3 -W 1 "$OUTRO" 2>&1)
 if [ $? -eq 0 ]; then
   RTT=$(printf '%s\n' "$SAIDA_PING" | grep -o 'time=[0-9.]* ms' | tail -n1)
-  printf '    %s✔ As VMs se enxergam%s   (3 enviados, 3 recebidos, %s)\n' "$VERDE$B" "$N" "${RTT:-ok}"
+  printf '    %s%s As VMs se enxergam%s   (3 enviados, 3 recebidos, %s)\n' "$VERDE$B" "$OK" "$N" "${RTT:-ok}"
 else
-  printf '    %s✘ Sem resposta de %s%s   -> conferir Rede Interna e IP fixo\n' "$VERM$B" "$OUTRO" "$N"
+  printf '    %s%s Sem resposta de %s%s   -> conferir Rede Interna e IP fixo\n' "$VERM$B" "$FALHA" "$OUTRO" "$N"
 fi
 
 printf '%s\n' "$L2"

@@ -41,6 +41,7 @@ Login nas VMs: usuário `eduardo` (senha combinada).
 - **Segundo terminal** na mesma VM: `Alt+F2` abre outro console (entre de novo com `eduardo`). `Alt+F1` volta.
 - O mouse fica sempre livre; para digitar numa VM, clique nela.
 - Não deixe o notebook dormir nem feche a tampa com as VMs ligadas.
+- **Para fechar a VM:** feche a janela (ela desliga sozinha, de forma limpa) ou digite `sudo poweroff`. Nunca use "Salvar o estado": a VM voltaria com o servidor antigo ainda rodando.
 - Guia rápido desta fase: [`docs/COLA-VMS.md`](docs/COLA-VMS.md).
 
 ---

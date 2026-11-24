@@ -1,9 +1,10 @@
-# RUN · Checklist da Projeto  
+# RUN · Checklist da Projeto
+
 Login nas VMs: usuário `eduardo` (senha combinada).
 
 ---
 
-- [ ] **[Até 2,0] Uso de VMs / Ambientes Distintos**
+- [x] **[Até 2,0] Uso de VMs / Ambientes Distintos**
   Configuração correta de rede e execução em instâncias isoladas (Debian/VirtualBox).
 
 ### Passo a passo
@@ -15,8 +16,8 @@ Login nas VMs: usuário `eduardo` (senha combinada).
 3. Entrar nas duas com o usuário `eduardo`.
 4. Nas duas:
    ```bash
-    cd telemetria-cisterna
-    bash ambiente.sh
+     cd telemetria-cisterna
+     bash ambiente.sh
    ```
 5. Mostrar, apontando na tela:
    - VirtualBox com as **duas VMs** (Configurações → Rede → Adaptador 2 = Rede Interna `intnet`);
@@ -31,6 +32,7 @@ Login nas VMs: usuário `eduardo` (senha combinada).
 | `[X] Sem resposta` no ping | Esperar a outra VM terminar de subir e rodar `bash ambiente.sh` de novo |
 | VM travada ou com mensagens de `soft lockup` | O notebook dormiu. Máquina → Reinicializar (volta em 40 s) |
 | Nada do que digito aparece | Clicar dentro da janela da VM certa |
+| `Address already in use` ao subir o servidor | O servidor já está rodando em outro console (`Alt+F1`...`Alt+F6` para achar). Ou `pkill -f servidor.py` e subir de novo |
 | Tudo errado | VirtualBox → VM → Snapshots → `pronto-apresentacao` → Restaurar (nas duas) |
 
 ### Dicas

@@ -1,4 +1,4 @@
-# RUN · Checklist da apresentação (24/11)
+# RUN · Checklist da apresentação (
 
 Marque cada critério quando estiver pronto. Total: 10 pontos (8 + 2 extras).
 Login nas VMs: usuário `eduardo` (senha combinada).
@@ -12,12 +12,13 @@ Login nas VMs: usuário `eduardo` (senha combinada).
 
 1. Abrir o **VirtualBox**. Na lista aparecem `debian-servidor` e `debian-cliente`.
 2. **Iniciar as duas** (selecionar → Iniciar). Elas sobem direto no terminal, em 30 a 40 s.
+
    Coloque as duas janelas lado a lado.
 3. Entrar nas duas com o usuário `eduardo`.
 4. Nas duas:
    ```bash
-   cd telemetria-cisterna
-   bash ambiente.sh
+    cd telemetria-cisterna
+    bash ambiente.sh
    ```
 5. Mostrar, apontando na tela:
    - VirtualBox com as **duas VMs** (Configurações → Rede → Adaptador 2 = Rede Interna `intnet`);
@@ -39,7 +40,6 @@ Login nas VMs: usuário `eduardo` (senha combinada).
 - **Segundo terminal** na mesma VM: `Alt+F2` abre outro console (entre de novo com `eduardo`). `Alt+F1` volta.
 - O mouse fica sempre livre; para digitar numa VM, clique nela.
 - Não deixe o notebook dormir nem feche a tampa com as VMs ligadas.
-- Guia rápido desta fase: [`docs/COLA-VMS.md`](docs/COLA-VMS.md).
 
 ---
 
@@ -53,15 +53,12 @@ Login nas VMs: usuário `eduardo` (senha combinada).
 5. Servidor: `status`. Em outro console do servidor: `bash ambiente.sh` (mostra as conexões `ESTABELECIDA`) e `cat log_cisterna.txt`.
 6. Cliente: `sair`. No servidor aparece `desconectou`.
 
-Roteiro detalhado: [`docs/ROTEIRO-APRESENTACAO.md`](docs/ROTEIRO-APRESENTACAO.md), seção 3.
-
 ---
 
 - [ ] **[Até 3,0] Apresentação Prática**
   Demonstração do sistema em funcionamento, explicação do código e domínio do tema.
 
 1. Explicar o código na ordem: `comum.py` (protocolo em linhas) → `servidor.py` (`main`, `atender_cliente`, `classificar`, `Central` + `Lock`) → `cliente.py` (`Simulacao.rodar`).
-2. Perguntas prováveis e respostas: roteiro, seção 6.
 
 ---
 

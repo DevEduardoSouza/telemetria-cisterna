@@ -24,12 +24,6 @@ Login nas VMs: usuário `eduardo` (senha combinada).
    - em cada VM: `Debian GNU/Linux 12`, hostname `servidor` / `cliente`;
    - IPs diferentes na mesma rede: `192.168.50.10` e `192.168.50.20` na `enp0s8`;
    - `[OK] As VMs se enxergam` (ping entre elas).
-6. Falar:
-   > "Duas VMs Debian independentes, numa rede interna do VirtualBox, com IPs diferentes.
-   > O ping prova que se enxergam. O servidor escuta em 0.0.0.0 e o cliente conecta vindo
-   > da outra máquina."
-
-Pronto: este critério está demonstrado. Siga direto para o próximo, no mesmo terminal.
 
 ### Se der errado
 
@@ -45,7 +39,7 @@ Pronto: este critério está demonstrado. Siga direto para o próximo, no mesmo 
 - **Segundo terminal** na mesma VM: `Alt+F2` abre outro console (entre de novo com `eduardo`). `Alt+F1` volta.
 - O mouse fica sempre livre; para digitar numa VM, clique nela.
 - Não deixe o notebook dormir nem feche a tampa com as VMs ligadas.
-- Cola completa desta fase: [`docs/COLA-VMS.md`](docs/COLA-VMS.md).
+- Guia rápido desta fase: [`docs/COLA-VMS.md`](docs/COLA-VMS.md).
 
 ---
 

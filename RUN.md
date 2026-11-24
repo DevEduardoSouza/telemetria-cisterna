@@ -1,6 +1,4 @@
-# RUN · Checklist da apresentação (
-
-Marque cada critério quando estiver pronto. Total: 10 pontos (8 + 2 extras).
+# RUN · Checklist da Projeto  
 Login nas VMs: usuário `eduardo` (senha combinada).
 
 ---
@@ -37,9 +35,11 @@ Login nas VMs: usuário `eduardo` (senha combinada).
 
 ### Dicas
 
+- **Comandos prontos:** aperte a **seta para cima** (↑) no terminal da VM e os comandos da apresentação aparecem inteiros; é só dar Enter. `Ctrl+R` e digitar parte do comando também busca.
 - **Segundo terminal** na mesma VM: `Alt+F2` abre outro console (entre de novo com `eduardo`). `Alt+F1` volta.
 - O mouse fica sempre livre; para digitar numa VM, clique nela.
 - Não deixe o notebook dormir nem feche a tampa com as VMs ligadas.
+- Guia rápido desta fase: [`docs/COLA-VMS.md`](docs/COLA-VMS.md).
 
 ---
 
@@ -53,12 +53,15 @@ Login nas VMs: usuário `eduardo` (senha combinada).
 5. Servidor: `status`. Em outro console do servidor: `bash ambiente.sh` (mostra as conexões `ESTABELECIDA`) e `cat log_cisterna.txt`.
 6. Cliente: `sair`. No servidor aparece `desconectou`.
 
+Roteiro detalhado: [`docs/ROTEIRO-APRESENTACAO.md`](docs/ROTEIRO-APRESENTACAO.md), seção 3.
+
 ---
 
 - [ ] **[Até 3,0] Apresentação Prática**
   Demonstração do sistema em funcionamento, explicação do código e domínio do tema.
 
 1. Explicar o código na ordem: `comum.py` (protocolo em linhas) → `servidor.py` (`main`, `atender_cliente`, `classificar`, `Central` + `Lock`) → `cliente.py` (`Simulacao.rodar`).
+2. Perguntas prováveis e respostas: roteiro, seção 6.
 
 ---
 
